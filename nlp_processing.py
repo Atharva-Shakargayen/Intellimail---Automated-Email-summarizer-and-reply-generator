@@ -2,7 +2,7 @@ from transformers import AutoModelForSequenceClassification, AutoModelForSeq2Seq
 import torch
 
 # Model names
-SENTIMENT_MODEL_NAME = "nlptown/bert-base-multilingual-uncased-sentiment"
+SENTIMENT_MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"  # Updated Sentiment Model
 SUMMARIZATION_MODEL_NAME = "facebook/bart-large-cnn"
 REPLY_GENERATION_MODEL_NAME = "google/flan-t5-large"
 
@@ -31,10 +31,14 @@ reply_model, reply_tokenizer = load_reply_model()
 def analyze_sentiment(text):
     inputs = sentiment_tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     outputs = sentiment_model(**inputs)
+    
+    # Log the raw logits to see the distribution (useful for debugging)
+    print(outputs.logits)
+
     label = outputs.logits.argmax().item()
 
     # Map label to human-readable sentiment
-    sentiment_labels = {0: "Very Negative", 1: "Negative", 2: "Neutral", 3: "Positive", 4: "Very Positive"}
+    sentiment_labels = {0: "Negative", 1: "Neutral", 2: "Positive"}
     return {"label": sentiment_labels.get(label, "Unknown"), "score": float(outputs.logits.softmax(dim=1).max())}
 
 # Summarization
@@ -48,7 +52,7 @@ def generate_reply(email_body):
     prompt = (
         "You are a professional email assistant. Your task is to respond to the email politely and appropriately.\n\n"
         f"Email Content:\n{email_body}\n\n"
-        "Reply professionally with specific feedback, acknowledge the person's intent, sentiment"
+        "Reply professionally with specific feedback, acknowledge the person's intent, sentiment."
         "Make sure the reply is personalized, encouraging, and relevant to the context."
     )
 
@@ -64,9 +68,6 @@ def generate_reply(email_body):
     )
 
     return reply_tokenizer.decode(reply_ids[0], skip_special_tokens=True)
-
-
-
 
 # Process Email Content
 def process_email_content(email_body):
