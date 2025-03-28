@@ -9,4 +9,5 @@ Then we use
 
 After this we use FastAPI for backend connectivity.
 
-After which a front end website in HTML, CSS and JavaScript.
+After which a front end website in StreamLit
+
