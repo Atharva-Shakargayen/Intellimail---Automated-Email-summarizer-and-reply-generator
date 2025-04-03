@@ -3,7 +3,7 @@
 
 In this project we use GMAIL API for fetching emails automatically.
 Then we use
-1. BERT for Sentiment Analysis
+1. ROBERTa for Sentiment Analysis
 2. BART for Summarization
 3. Flan T5 for reply generation.
 
